@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUILD THE FAITH CASTLE — Bangun Istana Keimanan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f0f9ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        h1, h2, h3, .heading-font {
+            font-family: 'Fredoka One', cursive;
+        }
+
+        /* 16:9 Aspect Ratio Container */
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 1280px;
+            aspect-ratio: 16 / 9;
+            /* Vibrant sky gradient */
+            background: linear-gradient(180deg, #a7e0ff 0%, #d4f0ff 40%, #ffd4e5 70%, #fff0f5 100%);
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 10px #ffffff;
+            overflow: hidden;
+        }
+
+        /* Scenery Elements (Inspired by image_03a9f9.jpg) */
+        .rainbow {
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: 
+                inset 0 0 0 30px rgba(255, 99, 132, 0.6), /* Pink/Red */
+                inset 0 0 0 60px rgba(255, 159, 64, 0.6), /* Orange */
+                inset 0 0 0 90px rgba(255, 205, 86, 0.6), /* Yellow */
+                inset 0 0 0 120px rgba(75, 192, 192, 0.6), /* Green */
+                inset 0 0 0 150px rgba(54, 162, 235, 0.6), /* Blue */
+                inset 0 0 0 180px rgba(153, 102, 255, 0.6); /* Purple */
+            opacity: 0.8;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .sun {
+            position: absolute;
+            top: 8%;
+            left: 10%;
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle, #fff3b0 0%, #ffd166 70%, #ffb703 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 50px #ffb703, inset -5px -5px 15px rgba(255,100,0,0.3);
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .sun-face {
+            position: absolute;
+            font-size: 4rem;
+            color: #d97706; /* Warmer color for the face */
+        }
+        .sun-rays {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: repeating-conic-gradient(from 0deg, #ffb703 0deg 15deg, transparent 15deg 30deg);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.3;
+            animation: rotateSun 30s linear infinite;
+        }
+
+        @keyframes rotateSun {
+            100% { transform: rotate(360deg); }
+        }
+
+        .cloud {
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50px;
+            box-shadow: inset -5px -5px 10px rgba(200,200,255,0.3), 5px 5px 15px rgba(0,0,0,0.05);
+            z-index: 1;
+            opacity: 0.9;
+        }
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50%;
+        }
+        .cloud-1 { width: 140px; height: 50px; top: 15%; right: 15%; animation: float 6s ease-in-out infinite; }
+        .cloud-1::before { width: 70px; height: 70px; top: -35px; left: 20px; }
+        .cloud-1::after { width: 60px; height: 60px; top: -25px; right: 20px; }
+        
+        .cloud-2 { width: 180px; height: 60px; top: 35%; left: 5%; animation: float 8s ease-in-out infinite 2s; }
+        .cloud-2::before { width: 90px; height: 90px; top: -45px; left: 30px; }
+        .cloud-2::after { width: 70px; height: 70px; top: -30px; right: 30px; }
+        
+        .cloud-3 { width: 100px; height: 40px; top: 10%; left: 35%; animation: float 7s ease-in-out infinite 1s; opacity: 0.7; }
+        .cloud-3::before { width: 50px; height: 50px; top: -25px; left: 15px; }
+        .cloud-3::after { width: 40px; height: 40px; top: -15px; right: 15px; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floor {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 35%;
+            background: #fdfbf7;
+            /* Simple noise/texture pattern using radial gradients */
+            background-image: radial-gradient(#e5e5e5 1px, transparent 1px);
+            background-size: 10px 10px;
+            z-index: 5;
+            box-shadow: inset 0 20px 30px -10px rgba(0,0,0,0.05);
+        }
+
+        .toy-block {
+            position: absolute;
+            border-radius: 4px;
+            /* Strong 3D shading: highlight top/left, shadow bottom/right */
+            box-shadow: 
+                inset 2px 2px 6px rgba(255,255,255,0.7), 
+                inset -4px -4px 8px rgba(0,0,0,0.2),
+                3px 5px 8px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+        
+        /* Toy Block Studs (Lego bumps) */
+        .stud {
+            position: absolute;
+            top: -12px;
+            width: 24px;
+            height: 14px;
+            border-radius: 4px 4px 0 0;
+            /* Stud shading matching the block */
+            box-shadow: 
+                inset 1px 2px 4px rgba(255,255,255,0.8),
+                inset -1px -1px 2px rgba(0,0,0,0.1),
+                1px 2px 3px rgba(0,0,0,0.2);
+            background: inherit;
+            z-index: -1;
+        }
+
+        /* Block Specific Shapes & Colors matching reference */
+        .block-red { background: linear-gradient(135deg, #ff6b6b, #ee5253); border: 1px solid #c8d6e5; }
+        .block-blue { background: linear-gradient(135deg, #48dbfb, #0abde3); border: 1px solid #c8d6e5;}
+        .block-green { background: linear-gradient(135deg, #1dd1a1, #10ac84); border: 1px solid #c8d6e5;}
+        .block-yellow { background: linear-gradient(135deg, #feca57, #ff9f43); border: 1px solid #c8d6e5;}
+        .block-purple { background: linear-gradient(135deg, #a29bfe, #6c5ce7); border: 1px solid #c8d6e5;}
+        .block-orange { background: linear-gradient(135deg, #ff9f43, #f368e0); border: 1px solid #c8d6e5;} /* Adjusting for a vibrant orange/pink mix */
+        .block-pink { background: linear-gradient(135deg, #ff9ff3, #f368e0); border: 1px solid #c8d6e5;}
+        .block-darkblue { background: linear-gradient(135deg, #54a0ff, #2e86de); border: 1px solid #c8d6e5;}
+
+        .roof-cone {
+            position: relative;
+            width: 80px;
+            height: 100px;
+            /* Using CSS polygons for the cone shape, applying a gradient for 3D */
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            box-shadow: inset -10px 0 20px rgba(0,0,0,0.2);
+        }
+        /* Top small stud for the cone */
+        .roof-cone::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 10px;
+            background: inherit;
+            border-radius: 4px 4px 0 0;
+            filter: brightness(1.2);
+        }
+
+        .battlement {
+            position: relative;
+            width: 100%;
+            height: 30px;
+            background: inherit;
+            /* Creating the castle teeth effect */
+            mask-image: repeating-linear-gradient(90deg, black 0, black 25%, transparent 25%, transparent 50%);
+            -webkit-mask-image: repeating-linear-gradient(90deg, black 0, black 25%, transparent 25%, transparent 50%);
+            box-shadow: inset 0 4px 6px rgba(255,255,255,0.4);
+        }
+
+        .arch-window {
+            position: absolute;
+            bottom: 0;
+            width: 40px;
+            height: 50px;
+            background-color: #333; /* Dark inside */
+            border-radius: 20px 20px 0 0;
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.8);
+        }
+
+
+        /* Castle Parts - Initially Hidden */
+        .castle-part {
+            opacity: 0;
+            transform: translateY(-300px) scale(0.9);
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy drop */
+        }
+        
+        .castle-part.built {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Slide Control */
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* UI Buttons */
+        .btn-game {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+            text-transform: uppercase;
+        }
+        .btn-game:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 10px 0 rgba(0,0,0,0.2);
+        }
+        .btn-game:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+        }
+
+        /* Badges */
+        .badge-slot {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            border: 4px dashed rgba(255,255,255,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            color: rgba(0,0,0,0.2);
+            transition: all 0.5s;
+        }
+        .badge-slot.earned {
+            background: #fde047;
+            border: 4px solid #b45309;
+            color: #b45309;
+            box-shadow: 0 0 15px #fde047;
+            animation: pop 0.5s;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.5); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Confetti for win screen */
+        .confetti-piece {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: red;
+            animation: fall linear infinite;
+            z-index: 100;
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(720deg); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        
+        <!-- Global Scenery -->
+        <div class="rainbow"></div>
+        <div class="sun">
+            <div class="sun-rays"></div>
+            <i class="fa-solid fa-face-smile sun-face"></i>
+        </div>
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+        
+        <div class="floor"></div>
+
+        <!-- Global HUD (Badges) -->
+        <div id="hud" class="absolute top-4 right-4 z-50 hidden flex gap-2">
+            <div class="bg-white/80 p-2 rounded-2xl shadow-lg border-2 border-gray-200 flex gap-2 backdrop-blur-sm">
+                <div class="badge-slot" id="badge-1"><i class="fa-solid fa-1"></i></div>
+                <div class="badge-slot" id="badge-2"><i class="fa-solid fa-2"></i></div>
+                <div class="badge-slot" id="badge-3"><i class="fa-solid fa-3"></i></div>
+                <div class="badge-slot" id="badge-4"><i class="fa-solid fa-4"></i></div>
+                <div class="badge-slot" id="badge-5"><i class="fa-solid fa-5"></i></div>
+                <div class="badge-slot" id="badge-6"><i class="fa-solid fa-6"></i></div>
+            </div>
+        </div>
+
+        <!-- SLIDE 1: COVER -->
+        <div class="slide active p-8" id="slide-1">
+            <div class="flex-1 flex flex-col items-center justify-center text-center relative z-10">
+                <!-- Floating blocks decoration -->
+                <div class="absolute right-32 top-20 text-7xl text-blue-400 animate-[float_4s_ease-in-out_infinite] opacity-70"><i class="fa-solid fa-cube"></i></div>
+                <div class="absolute left-32 bottom-32 text-8xl text-pink-400 animate-[float_5s_ease-in-out_infinite_1s] opacity-70"><i class="fa-solid fa-cubes"></i></div>
+                <div class="absolute right-48 bottom-20 text-6xl text-yellow-400 animate-[float_3s_ease-in-out_infinite_2s] opacity-70"><i class="fa-solid fa-cube"></i></div>
+
+                <div class="bg-white/80 backdrop-blur-md p-10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-8 border-white max-w-4xl relative">
+                    <div class="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-gradient-to-br from-yellow-300 to-yellow-500 w-32 h-32 rounded-full flex items-center justify-center border-4 border-white shadow-xl text-white text-6xl">
+                        <i class="fa-solid fa-child-reaching"></i>
+                    </div>
+
+                    <h1 class="text-5xl md:text-6xl text-blue-600 mb-4 drop-shadow-md heading-font mt-12 leading-tight">
+                        BUILD THE <span class="text-purple-500">FAITH</span> CASTLE
+                    </h1>
+                    <h2 class="text-3xl text-orange-500 mb-8 font-bold heading-font">— Bangun Istana Keimanan —</h2>
+                    
+                    <p class="text-2xl text-gray-700 mb-10 font-bold max-w-2xl mx-auto leading-relaxed bg-blue-50 p-6 rounded-2xl border-2 border-blue-200">
+                        Mari belajar 6 Rukun Iman dengan membangun istana mainan yang indah! Jawab tantangannya dan susun baloknya!
+                    </p>
+                    
+                    <button onclick="goToSlide(2)" class="btn-game bg-green-500 hover:bg-green-400 text-white text-3xl font-bold py-5 px-16 rounded-full heading-font inline-flex items-center gap-4">
+                        <i class="fa-solid fa-play"></i> MULAI BERMAIN
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: PETUNJUK -->
+        <div class="slide p-8" id="slide-2">
+            <div class="bg-white/95 w-full h-full rounded-3xl shadow-2xl border-8 border-blue-400 flex flex-col p-8 relative overflow-hidden backdrop-blur-md">
+                <h2 class="text-5xl text-blue-600 mb-8 heading-font text-center">
+                    <i class="fa-solid fa-map-location-dot text-yellow-500 mr-4"></i> Cara Bermain
+                </h2>
+                
+                <div class="flex-1 flex items-center justify-center gap-12 max-w-6xl mx-auto w-full">
+                    
+                    <!-- Character left -->
+                    <div class="w-1/4 flex flex-col items-center">
+                        <div class="w-48 h-48 bg-purple-100 rounded-full border-4 border-purple-400 flex items-center justify-center text-8xl text-purple-600 mb-4 shadow-lg">
+                            <i class="fa-solid fa-person-praying"></i>
+                        </div>
+                        <p class="text-2xl font-bold text-center text-purple-700 heading-font">Anak Shalih</p>
+                    </div>
+
+                    <!-- Steps -->
+                    <div class="w-3/4 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-blue-50 p-6 rounded-2xl border-4 border-blue-200 flex items-start gap-6 shadow-md transform hover:scale-105 transition-transform">
+                            <div class="bg-blue-500 text-white w-16 h-16 rounded-full flex items-center justify-center text-3xl heading-font shrink-0 shadow-lg">1</div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-blue-800 mb-2">Selesaikan Misi</h3>
+                                <p class="text-xl text-gray-700">Jawab pertanyaan seru tentang Rukun Iman.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-green-50 p-6 rounded-2xl border-4 border-green-200 flex items-start gap-6 shadow-md transform hover:scale-105 transition-transform">
+                            <div class="bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center text-3xl heading-font shrink-0 shadow-lg">2</div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-green-800 mb-2">Kumpulkan Balok</h3>
+                                <p class="text-xl text-gray-700">Jawaban benar akan memberimu balok istana warna-warni!</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-yellow-50 p-6 rounded-2xl border-4 border-yellow-200 flex items-start gap-6 shadow-md transform hover:scale-105 transition-transform">
+                            <div class="bg-yellow-500 text-white w-16 h-16 rounded-full flex items-center justify-center text-3xl heading-font shrink-0 shadow-lg">3</div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-yellow-800 mb-2">Koleksi Badge</h3>
+                                <p class="text-xl text-gray-700">Dapatkan 6 lencana bintang rukun iman di pojok kanan atas.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-coral-50 p-6 rounded-2xl border-4 border-rose-200 flex items-start gap-6 shadow-md transform hover:scale-105 transition-transform bg-rose-50">
+                            <div class="bg-rose-500 text-white w-16 h-16 rounded-full flex items-center justify-center text-3xl heading-font shrink-0 shadow-lg">4</div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-rose-800 mb-2">Bangun Istana</h3>
+                                <p class="text-xl text-gray-700">Selesaikan semua misi untuk melihat istana keimananmu berdiri megah!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center mt-8">
+                    <button onclick="startGame()" class="btn-game bg-purple-500 hover:bg-purple-400 text-white font-bold py-4 px-12 rounded-full text-2xl heading-font">
+                        SIAP? AYO KE AREA PEMBANGUNAN! <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: CASTLE HUB (Base / Progress) -->
+        <div class="slide" id="slide-3">
+            
+            <!-- CASTLE CONTAINER -->
+            <div id="castle-area" class="absolute bottom-[5%] left-1/2 transform -translate-x-1/2 w-[600px] h-[500px] z-20 flex flex-col justify-end items-center">
+                
+                <!-- Part 6: Top Spire (Yellow/Orange) -->
+                <div id="castle-part-6" class="castle-part flex flex-col items-center relative z-[6]">
+                    <div class="roof-cone block-yellow" style="width: 70px; height: 90px; margin-bottom: -10px;"></div>
+                    <div class="toy-block block-green w-[80px] h-[40px] relative flex justify-center mt-2">
+                         <div class="stud left-[10px]"></div><div class="stud left-[45px]"></div>
+                    </div>
+                </div>
+
+                <!-- Part 5: Main Pink Tower Body -->
+                <div id="castle-part-5" class="castle-part flex flex-col items-center relative z-[5] mt-0 -mb-1">
+                    <div class="toy-block block-pink w-[160px] h-[100px] flex flex-col items-center relative pt-2">
+                        <!-- Battlements -->
+                        <div class="absolute top-[-15px] left-0 w-full h-[20px] flex justify-around">
+                            <div class="w-[30px] h-[20px] block-pink rounded-t-sm shadow-[inset_1px_2px_4px_rgba(255,255,255,0.8)]"></div>
+                            <div class="w-[30px] h-[20px] block-pink rounded-t-sm shadow-[inset_1px_2px_4px_rgba(255,255,255,0.8)]"></div>
+                            <div class="w-[30px] h-[20px] block-pink rounded-t-sm shadow-[inset_1px_2px_4px_rgba(255,255,255,0.8)]"></div>
+                        </div>
+                        <div class="stud left-[15px] top-[-5px]"></div><div class="stud left-[65px] top-[-5px]"></div><div class="stud left-[115px] top-[-5px]"></div>
+                        <!-- Windows -->
+                        <div class="flex gap-4 mt-8">
+                             <div class="w-[30px] h-[40px] bg-gray-900 rounded-t-full shadow-inner border-t-2 border-pink-300"></div>
+                             <div class="w-[30px] h-[40px] bg-gray-900 rounded-t-full shadow-inner border-t-2 border-pink-300"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Part 4: Side Turrets (Red & Blue Roofs) -->
+                <div id="castle-part-4" class="castle-part absolute bottom-[180px] w-[340px] flex justify-between z-[4]">
+                    <!-- Left Turret (Red) -->
+                    <div class="flex flex-col items-center">
+                        <div class="roof-cone block-red" style="width: 70px; height: 90px;"></div>
+                        <div class="toy-block block-yellow w-[80px] h-[80px] relative flex justify-center items-end pb-2 mt-[-10px] z-[-1]">
+                            <div class="stud left-[10px]"></div><div class="stud left-[45px]"></div>
+                            <div class="w-[25px] h-[35px] bg-gray-900 rounded-t-full shadow-inner border-t-2 border-yellow-200"></div>
+                        </div>
+                    </div>
+                    <!-- Right Turret (Blue) -->
+                    <div class="flex flex-col items-center">
+                        <div class="roof-cone block-darkblue" style="width: 70px; height: 90px;"></div>
+                        <div class="toy-block block-purple w-[80px] h-[80px] relative flex justify-center items-end pb-2 mt-[-10px] z-[-1]">
+                            <div class="stud left-[10px]"></div><div class="stud left-[45px]"></div>
+                            <div class="w-[25px] h-[35px] bg-gray-900 rounded-t-full shadow-inner border-t-2 border-purple-300"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Part 3: Middle Base (Green & Orange) -->
+                <div id="castle-part-3" class="castle-part flex flex-col justify-center items-center relative z-[3] -mb-1">
+                     <div class="flex gap-1">
+                        <div class="toy-block block-yellow w-[100px] h-[50px] relative"><div class="stud left-[15px]"></div><div class="stud left-[60px]"></div></div>
+                        <div class="toy-block block-green w-[140px] h-[50px] relative"><div class="stud left-[20px]"></div><div class="stud left-[60px]"></div><div class="stud left-[100px]"></div></div>
+                        <div class="toy-block block-orange w-[100px] h-[50px] relative"><div class="stud left-[15px]"></div><div class="stud left-[60px]"></div></div>
+                     </div>
+                </div>
+
+                <!-- Part 2: Second Layer Base (Blue & Red) -->
+                <div id="castle-part-2" class="castle-part flex justify-center relative z-[2] -mb-1 w-full">
+                    <div class="toy-block block-blue w-[380px] h-[50px] relative flex justify-around">
+                        <div class="stud left-[20px]"></div><div class="stud left-[80px]"></div><div class="stud left-[140px]"></div>
+                        <div class="stud left-[200px]"></div><div class="stud left-[260px]"></div><div class="stud left-[320px]"></div>
+                    </div>
+                </div>
+
+                <!-- Part 1: Bottom Layer & Doors -->
+                <div id="castle-part-1" class="castle-part flex gap-1 relative z-[1] w-[420px] justify-between">
+                    <!-- Left block with door -->
+                    <div class="toy-block block-yellow w-[120px] h-[70px] relative flex justify-center items-end">
+                        <div class="stud left-[20px]"></div><div class="stud left-[75px]"></div>
+                        <div class="arch-window bg-gray-900 border-t-4 border-yellow-200"></div>
+                    </div>
+                    <!-- Center block -->
+                    <div class="toy-block block-orange w-[160px] h-[70px] relative">
+                         <div class="stud left-[20px]"></div><div class="stud left-[65px]"></div><div class="stud left-[110px]"></div>
+                    </div>
+                    <!-- Right block with door -->
+                    <div class="toy-block block-green w-[120px] h-[70px] relative flex justify-center items-end">
+                        <div class="stud left-[20px]"></div><div class="stud left-[75px]"></div>
+                        <div class="arch-window bg-gray-900 border-t-4 border-green-300"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Hub Controls -->
+            <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-30 flex flex-col items-center">
+                    MULAI MISI 1 <i class="fa-solid fa-hammer"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Quiz Slides Container -->
+        <div id="missions-container">
+            <!-- Slide 4: Mission 1 -->
+            <div class="slide p-8" id="slide-4"></div>
+            <!-- Slide 5: Mission 2 -->
+            <div class="slide p-8" id="slide-5"></div>
+            <!-- Slide 6: Mission 3 -->
+            <div class="slide p-8" id="slide-6"></div>
+            <!-- Slide 7: Mission 4 -->
+            <div class="slide p-8" id="slide-7"></div>
+            <!-- Slide 8: Mission 5 -->
+            <div class="slide p-8" id="slide-8"></div>
+            <!-- Slide 9: Mission 6 -->
+            <div class="slide p-8" id="slide-9"></div>
+        </div>
+
+        <!-- SLIDE 10: FEEDBACK BENAR -->
+        <div class="slide p-8" id="slide-10">
+            <div class="bg-green-400/90 w-full h-full rounded-3xl shadow-2xl border-8 border-white flex flex-col items-center justify-center p-8 relative backdrop-blur-sm z-50">
+                <div class="text-9xl text-white mb-6 animate-bounce drop-shadow-lg"><i class="fa-solid fa-face-laugh-beam"></i></div>
+                <h2 class="text-6xl text-white mb-4 heading-font drop-shadow-md">Masya Allah, Benar!</h2>
+                <p class="text-3xl text-green-100 font-bold mb-8 drop-shadow">Kamu mendapatkan balok baru untuk istanamu!</p>
+                <button onclick="returnToHub(true)" class="btn-game bg-white text-green-600 font-bold py-4 px-12 rounded-full text-3xl heading-font">
+                    PASANG BALOK <i class="fa-solid fa-cubes ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: FEEDBACK SALAH -->
+        <div class="slide p-8" id="slide-11">
+            <div class="bg-rose-400/90 w-full h-full rounded-3xl shadow-2xl border-8 border-white flex flex-col items-center justify-center p-8 relative backdrop-blur-sm z-50">
+                <div class="text-9xl text-white mb-6 drop-shadow-lg animate-pulse"><i class="fa-solid fa-face-smile-beam"></i></div>
+                <h2 class="text-6xl text-white mb-4 heading-font drop-shadow-md">Hampir Tepat!</h2>
+                <p class="text-3xl text-rose-100 font-bold mb-8 drop-shadow">Yuk coba baca lagi dan pilih jawaban yang lain.</p>
+                <button onclick="retryMission()" class="btn-game bg-white text-rose-600 font-bold py-4 px-12 rounded-full text-3xl heading-font">
+                    COBA LAGI <i class="fa-solid fa-rotate-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- SLIDE 12: VICTORY / COMPLETED CASTLE -->
+        <div class="slide" id="slide-12">
+            <!-- Confetti container -->
+            <div id="confetti-container" class="absolute inset-0 overflow-hidden pointer-events-none z-50"></div>
+            
+            <div class="absolute inset-0 bg-white/20 backdrop-blur-sm z-10"></div> <!-- Lighter dim -->
+
+            <div class="absolute inset-0 flex flex-col items-center justify-center z-20 p-8">
+                <div class="bg-white/95 p-10 rounded-3xl shadow-[0_0_100px_rgba(255,255,255,0.8)] border-8 border-pink-400 max-w-4xl text-center flex flex-col items-center">
+                    
+                    <div class="flex gap-4 text-6xl text-yellow-500 mb-6 drop-shadow-md">
+                        <i class="fa-solid fa-star animate-bounce"></i>
+                        <i class="fa-solid fa-star animate-bounce" style="animation-delay: 0.2s"></i>
+                        <i class="fa-solid fa-star animate-bounce" style="animation-delay: 0.4s"></i>
+                    </div>
+
+                    <h2 class="text-6xl text-blue-600 mb-4 heading-font">ALHAMDULILLAH!</h2>
+                    <h3 class="text-4xl text-purple-500 mb-6 font-bold heading-font">Istana Keimananmu Telah Berdiri!</h3>
+                    
+                    <p class="text-2xl text-gray-700 mb-8 font-bold leading-relaxed bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200">
+                        Kamu telah mengumpulkan 6 lencana Rukun Iman. Tanamkan iman di hatimu sekuat fondasi istana ini ya!
+                    </p>
+
+                    <div class="flex gap-4">
+                        <button onclick="viewCastle()" class="btn-game bg-blue-500 hover:bg-blue-400 text-white font-bold py-4 px-8 rounded-full text-2xl heading-font">
+                            <i class="fa-solid fa-eye"></i> LIHAT ISTANA
+                        </button>
+                        <button onclick="resetGame()" class="btn-game bg-green-500 hover:bg-green-400 text-white font-bold py-4 px-8 rounded-full text-2xl heading-font">
+                            <i class="fa-solid fa-rotate-right"></i> MAIN LAGI
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Data Misi Rukun Iman (Untuk Kelas 1-4 SD)
+        const missions = [
+            {
+                id: 1,
+                title: "Rukun Iman Ke-1",
+                topic: "Iman Kepada Allah",
+                icon: "fa-heart", // Abstract symbol for love/faith
+                iconColor: "text-rose-500",
+                question: "Siapakah Tuhan kita Yang Maha Esa, yang menciptakan langit, bumi, dan seluruh isinya?",
+                options: ["A. Malaikat", "B. Allah SWT", "C. Nabi Muhammad"],
+                correctIndex: 1
+            },
+            {
+                id: 2,
+                title: "Rukun Iman Ke-2",
+                topic: "Iman Kepada Malaikat",
+                icon: "fa-lightbulb", // Symbolizing created from Nur (Light)
+                iconColor: "text-yellow-500",
+                question: "Malaikat adalah makhluk ghaib yang sangat taat. Allah menciptakan malaikat dari apa?",
+                options: ["A. Cahaya (Nur)", "B. Api", "C. Tanah"],
+                correctIndex: 0
+            },
+            {
+                id: 3,
+                title: "Rukun Iman Ke-3",
+                topic: "Iman Kepada Kitab-Kitab",
+                icon: "fa-book-quran",
+                iconColor: "text-emerald-600",
+                question: "Kitab suci umat Islam yang diturunkan kepada Nabi Muhammad SAW sebagai pedoman hidup adalah...",
+                options: ["A. Zabur", "B. Injil", "C. Al-Qur'an"],
+                correctIndex: 2
+            },
+            {
+                id: 4,
+                title: "Rukun Iman Ke-4",
+                topic: "Iman Kepada Rasul",
+                icon: "fa-users",
+                iconColor: "text-blue-500",
+                question: "Umat Islam wajib mengimani nabi dan rasul utusan Allah. Berapakah jumlah Nabi dan Rasul yang wajib kita ketahui?",
+                options: ["A. 5", "B. 25", "C. 99"],
+                correctIndex: 1
+            },
+            {
+                id: 5,
+                title: "Rukun Iman Ke-5",
+                topic: "Iman Kepada Hari Akhir",
+                icon: "fa-scale-balanced", // Justice/Scales
+                iconColor: "text-purple-500",
+                question: "Hari di mana seluruh alam semesta hancur dan manusia dibangkitkan untuk ditimbang amalnya disebut...",
+                options: ["A. Hari Raya", "B. Hari Libur", "C. Hari Kiamat"],
+                correctIndex: 2
+            },
+            {
+                id: 6,
+                title: "Rukun Iman Ke-6",
+                topic: "Iman Kepada Qada & Qadar",
+                icon: "fa-clipboard-check", // Decree/Plan
+                iconColor: "text-orange-500",
+                question: "Percaya bahwa segala sesuatu yang terjadi, baik atau buruk, adalah kehendak dan ketetapan Allah disebut iman kepada...",
+                options: ["A. Qada dan Qadar", "B. Kitab Allah", "C. Rasul Allah"],
+                correctIndex: 0
+            }
+        ];
+
+        // Game State
+        let currentMissionIndex = 0; // 0 to 5
+        let castleProgress = 0; // 0 to 6
+        let activeSlide = 1;
+
+        // DOM Elements
+        const hud = document.getElementById('hud');
+        const btnNextMission = document.getElementById('btn-next-mission');
+        const missionStatus = document.getElementById('mission-status');
+
+        function initGame() {
+            // Build Mission Slides
+            missions.forEach((mission, index) => {
+                const container = document.getElementById(`slide-${index + 4}`);
+                
+                let buttonsHTML = '';
+                const btnColors = [
+                    'bg-blue-500 border-b-blue-700 hover:bg-blue-400',
+                    'bg-green-500 border-b-green-700 hover:bg-green-400',
+                    'bg-purple-500 border-b-purple-700 hover:bg-purple-400'
+                ];
+
+                mission.options.forEach((opt, idx) => {
+                    const isCorrect = (idx === mission.correctIndex);
+                    buttonsHTML += `
+                        <button onclick="checkAnswer(${isCorrect})" class="btn-game ${btnColors[idx]} text-white font-bold py-6 px-8 rounded-2xl text-2xl border-b-8 w-full text-left flex items-center shadow-lg">
+                            <span class="flex-1">${opt}</span>
+                        </button>
+                    `;
+                });
+
+                container.innerHTML = `
+                    <div class="bg-white/95 w-full h-full rounded-3xl shadow-2xl border-8 border-yellow-300 flex flex-col p-8 relative overflow-hidden">
+                        
+                        <!-- Header -->
+                        <div class="flex items-center gap-6 border-b-4 border-gray-100 pb-4 mb-6">
+                            <div class="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-inner border-2 border-gray-200 ${mission.iconColor}">
+                                <i class="fa-solid ${mission.icon}"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl text-gray-500 font-bold heading-font uppercase">${mission.title}</h2>
+                                <h3 class="text-4xl text-gray-800 heading-font">${mission.topic}</h3>
+                            </div>
+                        </div>
+
+                        <!-- Question Area -->
+                        <div class="flex-1 flex flex-col justify-center max-w-5xl mx-auto w-full gap-8">
+                            <div class="bg-blue-50 p-8 rounded-3xl border-4 border-blue-200 relative shadow-md">
+                                <!-- Decorative abstract light -->
+                                <div class="absolute -top-6 -left-6 text-6xl text-yellow-400 animate-pulse"><i class="fa-solid fa-sparkles"></i></div>
+                                
+                                <p class="text-3xl text-gray-800 font-bold text-center leading-relaxed">
+                                    "${mission.question}"
+                                </p>
+                            </div>
+
+                            <!-- Options Grid -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                ${buttonsHTML}
+                            </div>
+                        </div>
+                        
+                        <!-- Back button -->
+                        <div class="absolute bottom-8 left-8">
+                             <button onclick="goToSlide(3)" class="btn-game bg-gray-300 hover:bg-gray-200 text-gray-700 font-bold py-3 px-8 rounded-full text-xl flex items-center gap-2">
+                                <i class="fa-solid fa-arrow-left"></i> Kembali ke Istana
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function goToSlide(num) {
+            document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+            document.getElementById(`slide-${num}`).classList.add('active');
+            activeSlide = num;
+
+            // HUD visibility: show on Hub (3) and Missions (4-9)
+            if (num >= 3 && num <= 9) {
+                hud.classList.remove('hidden');
+            } else {
+                hud.classList.add('hidden');
+            }
+
+            // Update Hub UI if entering slide 3
+            if (num === 3) {
+                updateHubUI();
+            }
+        }
+
+        function startGame() {
+            castleProgress = 0;
+            currentMissionIndex = 0;
+            
+            // Reset Badges
+            for(let i=1; i<=6; i++) {
+                document.getElementById(`badge-${i}`).classList.remove('earned');
+            }
+            
+            // Hide all castle parts
+            for(let i=1; i<=6; i++) {
+                document.getElementById(`castle-part-${i}`).classList.remove('built');
+            }
+
+            goToSlide(3); // Go to Castle Hub
+        }
+
+        function openCurrentMission() {
+            if (currentMissionIndex < 6) {
+                goToSlide(currentMissionIndex + 4); // Slides 4-9
+            }
+        }
+
+        function checkAnswer(isCorrect) {
+            if (isCorrect) {
+                goToSlide(10); // Feedback Benar
+            } else {
+                goToSlide(11); // Feedback Salah
+            }
+        }
+
+        function retryMission() {
+            openCurrentMission();
+        }
+
+        function returnToHub(isSuccess) {
+            if (isSuccess) {
+                castleProgress++;
+                
+                // Earn Badge visual
+                const badge = document.getElementById(`badge-${castleProgress}`);
+                badge.classList.add('earned');
+                
+                currentMissionIndex++;
+            }
+            goToSlide(3);
+        }
+
+        function updateHubUI() {
+            // Animate Castle Parts based on progress
+            for(let i=1; i<=6; i++) {
+                const part = document.getElementById(`castle-part-${i}`);
+                if (i <= castleProgress) {
+                    // Slight delay for dramatic effect if it's the newly added piece
+                    if (i === castleProgress && !part.classList.contains('built')) {
+                        setTimeout(() => {
+                            part.classList.add('built');
+                        }, 500);
+                    } else {
+                        part.classList.add('built');
+                    }
+                } else {
+                    part.classList.remove('built');
+                }
+            }
+
+            // Update Text and Button
+            if (castleProgress === 0) {
+                missionStatus.innerText = "Lahan Kosong. Mulai bangun pondasi!";
+                btnNextMission.innerHTML = `MULAI MISI 1 <i class="fa-solid fa-hammer"></i>`;
+                btnNextMission.classList.remove('hidden');
+            } else if (castleProgress < 6) {
+                missionStatus.innerText = `Luar Biasa! Rukun Iman ke-${castleProgress} Selesai.`;
+                btnNextMission.innerHTML = `LANJUT MISI ${currentMissionIndex + 1} <i class="fa-solid fa-arrow-right"></i>`;
+                btnNextMission.classList.remove('hidden');
+            } else {
+                // Fully built
+                missionStatus.innerText = "Istana Sempurna!";
+                btnNextMission.classList.add('hidden'); // Hide next button
+                
+                // Wait a moment then show Victory screen
+                setTimeout(() => {
+                    createConfetti();
+                    goToSlide(12);
+                }, 2500);
+            }
+        }
+
+        function createConfetti() {
+            const container = document.getElementById('confetti-container');
+            container.innerHTML = ''; // clear existing
+            const colors = ['#ff6b6b', '#48dbfb', '#1dd1a1', '#feca57', '#a29bfe', '#ff9f43'];
+            
+            for (let i = 0; i < 150; i++) {
+                const conf = document.createElement('div');
+                conf.classList.add('confetti-piece');
+                
+                // Random properties
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = -20 + 'px';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                conf.style.animationDelay = (Math.random() * 2) + 's';
+                
+                // Random shape (square or circle)
+                if(Math.random() > 0.5) conf.style.borderRadius = '50%';
+                
+                // Random 3D rotation
+                conf.style.transform = `rotateX(${Math.random()*360}deg) rotateY(${Math.random()*360}deg)`;
+                
+                container.appendChild(conf);
+            }
+        }
+
+        function viewCastle() {
+            // Hides slide 12 overlay to look at slide 3 (the castle)
+            document.getElementById('slide-12').classList.remove('active');
+            hud.classList.remove('hidden');
+            
+            // Modify hub button to "SELESAI"
+            btnNextMission.classList.remove('hidden');
+            btnNextMission.innerHTML = `SELESAI <i class="fa-solid fa-check"></i>`;
+            btnNextMission.onclick = () => resetGame();
+        }
+
+        function resetGame() {
+            // Restore original onclick behavior
+            btnNextMission.onclick = () => openCurrentMission();
+            goToSlide(1);
+        }
+
+        // Run initialization on load
+        window.onload = () => {
+            initGame();
+        };
+
+    </script>
+</body>
+</html>
